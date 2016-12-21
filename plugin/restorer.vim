@@ -72,7 +72,6 @@ endfunction "}}}
 function! s:get_backups(tag) "{{{
 
   let l:tag = a:tag == "" ? "" : "_" . a:tag
-  echo l:tag
   let l:ret = []
   let l:dirs =  split(glob(g:restorer#dir . "/*" . l:tag), "\n")
   for l:dir in l:dirs
@@ -256,7 +255,8 @@ function! restorer#remove_all(tag) "{{{
   endfor
 endfunction "}}}
 
-function! restorer#list(tag) "{{{
+function! restorer#list(...) "{{{
+  let l:tag = get(a:, 1, "")
   return s:get_backups(a:tag)
 endfunction "}}}
 
