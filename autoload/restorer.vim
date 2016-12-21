@@ -9,7 +9,9 @@ scriptencoding utf-8
 let s:save_cpo = &cpo
 set cpo&vim
 
-" Utils{{{
+
+
+" Utils
 
 function! s:str2date(str) "{{{
   return a:str[0:3] . "/" . a:str[4:5] . "/". a:str[6:7] . " " . a:str[8:9] . ":" . a:str[10:11] . ":" . a:str[12:13]
@@ -51,9 +53,9 @@ function! s:set_sessionoptions(...) "{{{
 
 endfunction "}}}
 
-"}}}
 
-" Get backup {{{
+
+" Get backup 
 
 function! s:get_backups(tag) "{{{
 
@@ -107,9 +109,9 @@ function! s:select_backup(tag) "{{{
 
 endfunction "}}}
 
-"}}}
 
-" Save {{{
+
+" Save 
 
 function! s:save_session(tag) "{{{
 
@@ -150,9 +152,9 @@ function! s:save(tag) "{{{
 
 endfunction "}}}
 
-"}}}
 
-" Load {{{
+
+" Load 
 
 function! s:load_session(dir) "{{{
 
@@ -191,9 +193,9 @@ function! s:load(tag) "{{{
 
 endfunction "}}}
 
-"}}}
 
-" Remove {{{
+
+" Remove 
 
 function! s:remove(tag) "{{{
 
@@ -205,7 +207,9 @@ function! s:remove(tag) "{{{
 
 endfunction "}}}
 
-"}}}
+
+
+" Public function
 
 function! restorer#save(...) "{{{
   let l:tag = strftime("%Y%m%d%H%M%S") . "_" . get(a:, 1, g:restorer#tag)
@@ -239,6 +243,12 @@ function! restorer#remove_all(tag) "{{{
     call s:remove(l:tag)
   endfor
 endfunction "}}}
+
+function! restorer#list(tag) "{{{
+  return s:get_backups(a:tag) "{{{
+endfunction "}}}
+
+
 
 let &cpo = s:save_cpo
 unlet s:save_cp
