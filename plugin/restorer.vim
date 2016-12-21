@@ -40,13 +40,14 @@ function! s:mkdir(dir) "{{{
 endfunction "}}}
 
 function! s:rmdir(dir) "{{{
-
-  execute "!rm -rf " . a:dir
-
+  try
+    execute "!rm -rf " . a:dir
+  catch
+    echoerr "This system can't execute rm command"
+  endtry
 endfunction "}}}
 
 function! s:set_sessionoptions(...) "{{{
-
   setlocal sessionoptions=
   setlocal sessionoptions+=blank
   setlocal sessionoptions+=buffers
@@ -62,7 +63,6 @@ function! s:set_sessionoptions(...) "{{{
   setlocal sessionoptions+=unix
   setlocal sessionoptions+=winpos
   setlocal sessionoptions+=winsize
-
 endfunction "}}}
 
 
@@ -70,26 +70,20 @@ endfunction "}}}
 " Get backup 
 
 function! s:get_backups(tag) "{{{
-
   let l:tag = a:tag == "" ? "" : "_" . a:tag
   let l:ret = []
   let l:dirs =  split(glob(g:restorer#dir . "/*" . l:tag), "\n")
   for l:dir in l:dirs
     call add(l:ret, fnamemodify(l:dir, ":t"))
   endfor
-
   return l:ret
-
 endfunction "}}}
 
 function! s:get_latest_backup(tag) "{{{
-
   return remove(s:get_backups(a:tag), -1) 
-
 endfunction "}}}
 
 function! s:select_backup(tag) "{{{
-
   let l:cnt = 1
   let l:tags = s:get_backups(a:tag)
   if len(l:tags) > 1
@@ -117,7 +111,6 @@ function! s:select_backup(tag) "{{{
     echo a:tag . " not found."
     return ""
   endif
-
 endfunction "}}}
 
 
@@ -125,9 +118,7 @@ endfunction "}}}
 " Save 
 
 function! s:save_session(tag) "{{{
-
   call s:set_sessionoptions()
-
   let l:session = g:restorer#dir . "/" . a:tag . "/session.vim"
   try
     if !filewritable(l:session)
@@ -137,11 +128,9 @@ function! s:save_session(tag) "{{{
   catch
     " echoerr "Can't save session info to " . l:session
   endtry
-
 endfunction "}}}
 
 function! s:save_viminfo(tag) "{{{
-
   let l:session = g:restorer#dir . "/" . a:tag . "/session.vim"
   try
     if !filewritable(l:viminfo)
@@ -151,16 +140,13 @@ function! s:save_viminfo(tag) "{{{
   catch
     " echoerr "Can't save viminfo to " . l:viminfo
   endtry
-
 endfunction "}}}
 
 function! s:save(tag) "{{{
-
   let l:dir = g:restorer#dir . "/" . a:tag
   call s:mkdir(l:dir)
   call s:save_session(a:tag)
   call s:save_viminfo(a:tag)
-
 endfunction "}}}
 
 
@@ -168,7 +154,6 @@ endfunction "}}}
 " Load 
 
 function! s:load_session(dir) "{{{
-
   let l:session = a:dir . "/session.vim"
   try
     if filereadable(l:session)
@@ -177,11 +162,9 @@ function! s:load_session(dir) "{{{
   catch
     " echoerr "Can't load session info from " . l:session
   endtry
-
 endfunction "}}}
 
 function! s:load_viminfo(dir) "{{{
-
   let l:viminfo = a:dir . "/viminfo.vim"
   try
     if filereadable(l:viminfo)
@@ -190,18 +173,14 @@ function! s:load_viminfo(dir) "{{{
   catch
     " echoerr "Can't load viminfo from " . l:viminfo
   endtry
-
 endfunction "}}}
 
 function! s:load(tag) "{{{
-
   let l:dir = g:restorer#dir . "/" . a:tag
-
   if l:dir != ""
     call s:load_session(l:dir)
     call s:load_viminfo(l:dir)
   endif
-
 endfunction "}}}
 
 
@@ -209,13 +188,10 @@ endfunction "}}}
 " Remove 
 
 function! s:remove(tag) "{{{
-
   let l:dir = g:restorer#dir . "/" . a:tag
-
   if l:dir != ""
     call s:rmdir(l:dir)
   endif
-
 endfunction "}}}
 
 
