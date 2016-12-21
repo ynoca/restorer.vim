@@ -257,7 +257,7 @@ endfunction "}}}
 
 function! restorer#list(...) "{{{
   let l:tag = get(a:, 1, "")
-  return s:get_backups(a:tag)
+  return s:get_backups(l:tag)
 endfunction "}}}
 
 
