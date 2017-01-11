@@ -155,24 +155,24 @@ endfunction "}}}
 
 function! s:load_session(dir) "{{{
   let l:session = a:dir . "/session.vim"
-  try
-    if filereadable(l:session)
+  if filereadable(l:session)
+    try
       execute "source " . l:session
-    endif
-  catch
-    echoerr "Can't load session info from " . l:session
-  endtry
+    catch
+      echoerr "Can't load session info from " . l:session
+    endtry
+  endif
 endfunction "}}}
 
 function! s:load_viminfo(dir) "{{{
   let l:viminfo = a:dir . "/viminfo.vim"
-  try
-    if filereadable(l:viminfo)
+  if filereadable(l:viminfo)
+    try
       execute "rviminfo " . l:viminfo
-    endif
-  catch
-    echoerr "Can't load viminfo from " . l:viminfo
-  endtry
+    catch
+      echoerr "Can't load viminfo from " . l:viminfo
+    endtry
+  endif
 endfunction "}}}
 
 function! s:load(tag) "{{{
