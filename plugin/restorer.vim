@@ -67,9 +67,9 @@ endfunction "}}}
 
 
 
-" Get backup 
+" Get snapshot 
 
-function! s:get_backups(tag) "{{{
+function! s:get_snapshots(tag) "{{{
   let l:tag = a:tag == "" ? "" : "_" . a:tag
   let l:ret = []
   let l:dirs =  split(glob(g:restorer#dir . "/*" . l:tag), "\n")
@@ -79,13 +79,13 @@ function! s:get_backups(tag) "{{{
   return l:ret
 endfunction "}}}
 
-function! s:get_latest_backup(tag) "{{{
-  return remove(s:get_backups(a:tag), -1) 
+function! s:get_latest_snapshot(tag) "{{{
+  return remove(s:get_snapshots(a:tag), -1) 
 endfunction "}}}
 
-function! s:select_backup(tag) "{{{
+function! s:select_snapshot(tag) "{{{
   let l:cnt = 1
-  let l:tags = s:get_backups(a:tag)
+  let l:tags = s:get_snapshots(a:tag)
   if len(l:tags) > 1
     let l:display = "list of restorable file \n"
     for l:tag in l:tags
@@ -126,19 +126,19 @@ function! s:save_session(tag) "{{{
     endif
     execute "mksession! " . l:session
   catch
-    " echoerr "Can't save session info to " . l:session
+    echoerr "Can't save session info to " . l:session
   endtry
 endfunction "}}}
 
 function! s:save_viminfo(tag) "{{{
-  let l:session = g:restorer#dir . "/" . a:tag . "/session.vim"
+  let l:viminfo = g:restorer#dir . "/" . a:tag . "/viminfo.vim"
   try
     if !filewritable(l:viminfo)
       execute "redir > " . l:viminfo
     endif
     execute "wviminfo!  " . l:viminfo
   catch
-    " echoerr "Can't save viminfo to " . l:viminfo
+    echoerr "Can't save viminfo to " . l:viminfo
   endtry
 endfunction "}}}
 
@@ -194,6 +194,12 @@ function! s:remove(tag) "{{{
   endif
 endfunction "}}}
 
+function! s:remove_all(tag) "{{{
+  let l:tags = s:get_snapshots(l:tag)
+  for l:tag in l:tags
+    call s:remove(l:tag)
+  endfor
+endfunction "}}}
 
 
 " Public function
@@ -204,36 +210,34 @@ function! restorer#save(...) "{{{
 endfunction "}}}
 
 function! restorer#save_latest(tag) "{{{
-  call s:remove(s:get_latest_backup(a:tag))
+  call s:remove(s:get_latest_snapshot(a:tag))
   call restorer#save(a:tag)
 endfunction "}}}
 
 function! restorer#load(...) "{{{
   let l:tag = get(a:, 1, "")
-  call s:load(s:select_backup(l:tag))
+  call s:load(s:select_snapshot(l:tag))
 endfunction "}}}
 
 function! restorer#load_latest(tag) "{{{
   let l:tag = get(a:, 1, "")
-  call s:load(s:get_latest_backup(l:tag))
+  call s:load(s:get_latest_snapshot(l:tag))
 endfunction "}}}
 
 function! restorer#remove(...) "{{{
   let l:tag = get(a:, 1, "")
-  call s:remove(s:select_backup(l:tag))
+  call s:remove(s:select_snapshot(l:tag))
 endfunction "}}}
 
 function! restorer#remove_all(tag) "{{{
   let l:tag = get(a:, 1, "")
-  let l:tags = s:get_backups(l:tag)
-  for l:tag in l:tags
-    call s:remove(l:tag)
-  endfor
+  let l:tag = s:select_snapshot(l:tag)
+  call s:remove_all(l:tag)
 endfunction "}}}
 
 function! restorer#list(...) "{{{
   let l:tag = get(a:, 1, "")
-  return s:get_backups(l:tag)
+  return s:get_snapshots(l:tag)
 endfunction "}}}
 
 
