@@ -160,7 +160,7 @@ function! s:load_session(dir) "{{{
       execute "source " . l:session
     endif
   catch
-    " echoerr "Can't load session info from " . l:session
+    echoerr "Can't load session info from " . l:session
   endtry
 endfunction "}}}
 
@@ -171,7 +171,7 @@ function! s:load_viminfo(dir) "{{{
       execute "rviminfo " . l:viminfo
     endif
   catch
-    " echoerr "Can't load viminfo from " . l:viminfo
+    echoerr "Can't load viminfo from " . l:viminfo
   endtry
 endfunction "}}}
 
